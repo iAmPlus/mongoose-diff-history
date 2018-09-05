@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const historySchema = new Schema(
     {
         collectionName: String,
-        collectionId: Schema.Types.ObjectId,
+        collectionId: String,
         diff: {},
         user: {},
         reason: String,
