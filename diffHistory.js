@@ -8,21 +8,25 @@ const diffPatcher = require('jsondiffpatch').create({
     objectHash,
     propertyFilter: function(name, context) {
         let isProcessProperty = true;
-        let ifLeftTypeObj = false;
-        let ifRightTypeObj = false;
-        if (Array.isArray(context.left[name]) 
-            && Array.isArray(context.right[name])) {
-            if (context.left[name].length > 0
-                && context.right[name].length > 0) {
-                ifLeftTypeObj = context.left[name][0] instanceof Object;
-                ifRightTypeObj = context.right[name][0] instanceof Object;
+        try {        
+            let ifLeftTypeObj = false;
+            let ifRightTypeObj = false;
+            if (Array.isArray(context.left[name]) 
+                && Array.isArray(context.right[name])) {
+                if (context.left[name].length > 0
+                    && context.right[name].length > 0) {
+                    ifLeftTypeObj = context.left[name][0] instanceof Object;
+                    ifRightTypeObj = context.right[name][0] instanceof Object;
+                }
+            } else {
+                ifLeftTypeObj = context.left[name] instanceof Object;
+                ifRightTypeObj = context.right[name] instanceof Object;
             }
-        } else {
-            ifLeftTypeObj = context.left[name] instanceof Object;
-            ifRightTypeObj = context.right[name] instanceof Object;
-        }
-        // process this prop only if both are objects and both are non objects
-        isProcessProperty = !ifLeftTypeObj ? !ifRightTypeObj : ifRightTypeObj;
+            // process this prop only if both are objects and both are non objects
+            isProcessProperty = !ifLeftTypeObj ? !ifRightTypeObj : ifRightTypeObj;
+        } catch(e) {
+            console.error(e);
+        }    
         return isProcessProperty;
     }
 });
