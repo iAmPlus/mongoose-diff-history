@@ -7,10 +7,23 @@ const objectHash = (obj, idx) => obj._id || obj.id || `$$index: ${idx}`;
 const diffPatcher = require('jsondiffpatch').create({ 
     objectHash,
     propertyFilter: function(name, context) {
-        console.log(name);
-        console.log(context.left[name]);
-        console.log('-------');
-        return true;
+        let isProcessProperty = true;
+        let ifLeftTypeObj = false;
+        let ifRightTypeObj = false;
+        if (Array.isArray(context.left[name]) 
+            && Array.isArray(context.right[name])) {
+            if (context.left[name].length > 0
+                && context.right[name].length > 0) {
+                ifLeftTypeObj = context.left[name][0] instanceof Object;
+                ifRightTypeObj = context.right[name][0] instanceof Object;
+            }
+        } else {
+            ifLeftTypeObj = context.left[name] instanceof Object;
+            ifRightTypeObj = context.right[name] instanceof Object;
+        }
+        // process this prop only if both are objects and both are non objects
+        isProcessProperty = !ifLeftTypeObj ? !ifRightTypeObj : ifRightTypeObj;
+        return isProcessProperty;
     }
 });
 
